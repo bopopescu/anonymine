@@ -653,10 +653,10 @@ class game_engine():
         Uses multiple processes to test random fields to find a
         solvable one.  When a process finds a solvable field, it will
         store the coordinates of the mines in a tempfile which will
-        then be read by the master process.
+        then be read by the main process.
         
         enginecfg['init-field']
-            'procs'     int: Number of slaves.
+            'procs'     int: Number of subordinates.
             'maxtime'   float: Start over after having tried one field
                         for this long.
             'filename'  string: tempfile, filename.format(x)
@@ -670,13 +670,13 @@ class game_engine():
             ))
             # Set up handler for kill signal.
             # Solved bug:
-            #   There was a small possibility that another slave would
-            #   finish before getting killed by the master, causing os.kill
-            #   to fail. Because of this, the slaves will from now on be
+            #   There was a small possibility that another subordinate would
+            #   finish before getting killed by the main, causing os.kill
+            #   to fail. Because of this, the subordinates will from now on be
             #   killed with SIGCONT rather than SIGTERM, as SIGCONT will be
             #   ignored by an innocent process that might start after a
-            #   second slave finishes but before the slave gets killed by
-            #   the master.
+            #   second subordinate finishes but before the subordinate gets killed by
+            #   the main.
             #   Update 2016-07-15:  Processes will only be killed if their
             #   tempfiles can't be deleted (most likely because they don't
             #   exist yet);
@@ -725,7 +725,7 @@ class game_engine():
         filename = self.cfg['init-field']['filename']
         for i in range(8):
             filename += '-'+str(ord(os.urandom(1)))
-        # Create slaves.
+        # Create subordinates.
         if unix:
             children = []
             for i in range(self.cfg['init-field']['procs']):
